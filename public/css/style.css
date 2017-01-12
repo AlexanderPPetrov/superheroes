@@ -1,0 +1,17 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+
+#word-matrix {
+  position:relative;
+}
+#word-matrix .letter {
+  color: white;
+  position: absolute;
+  background: #333333;
+  width: 30px;
+  line-height: 30px;
+  text-align: center;
+}
