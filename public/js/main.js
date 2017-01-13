@@ -1,19 +1,25 @@
-var lettersArray = new Array();
-lettersArray[0]= new Array("a","","c","d","e","f","g","h","i","j" );
-lettersArray[1]= new Array("A","","C","","","F","","","I","J" );
-lettersArray[2]= new Array("ä","","","","","Ø",">","","","ÿ" );
-
-var wordsArray = ["test", "combo","another","programming","associate","word","what","cat","dog","vvv"];
-
-var lettersHashMap = {},
-    commonWords = {};
-
-
-var boxSize = 31;
+var wordsArray = ["test", "combo","another","programming","associate","word","what","cat","dog","vvv"],
+    lettersArray = [],
+    lettersHashMap = {},
+    commonWords = {},
+    boxSize = 31;
 
 function init() {
-    // test render
-    renderLetters(lettersArray);
+
+    addEvent();
+    calculateWords();
+
+}
+
+function addEvent(){
+    $('#render-button').on('click', function(){
+        var value = $(this).closest('.input-group').find('input').val().replace(/ /g,'');
+        wordsArray = value.split(',');
+        calculateWords();
+    })
+}
+
+function calculateWords(){
 
     wordsArray.sort(function(a, b){
         return b.length - a.length;
@@ -22,11 +28,12 @@ function init() {
     lettersHashMap = getLettersHashMap(wordsArray);
     commonWords = getCommonWordsHashMap(lettersHashMap, wordsArray);
     excludeUncommonWords(commonWords);
-    console.log(wordsArray, lettersHashMap, commonWords)
+    lettersArray = defineLettersGrid(wordsArray);
+    console.log(wordsArray, lettersHashMap, commonWords, lettersArray);
+
+    renderLetters(lettersArray);
 
 }
-
-
 
 function getLettersHashMap(words){
 
@@ -95,10 +102,29 @@ function renderLetters(lettersArray){
     }
 
 }
-//TODO
 
-// Dictionary za bukva i dumi
-// findNeighbours - думи които споделят същите букви
-// words = removeWordsWithoutNeighbours(words, neighbours);
-// da excludena dumite bez obsti bukvi ot wordsArray i ot 2ta hashmapa
+function defineLettersGrid(words){
+    var lettersGrid = [],
+        index = Math.ceil(words.length/2),
+        maxSize = 0;
+    for(var i = 0; i < index; i++) {
+        maxSize += words[i].length - 1;
+    }
+    maxSize = maxSize * 2;
+
+    for (var j = 0; j < maxSize; j++) {
+        var xArray = [];
+            lettersGrid.push(xArray);
+
+        for (var k = 0; k < maxSize; k++) {
+            lettersGrid[j].push('_');
+        }
+    }
+    return lettersGrid;
+
+}
+
+
+
+//TODO
 

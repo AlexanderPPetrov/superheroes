@@ -5,12 +5,30 @@
     <title>JS Task</title>
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/main.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-    <div id="word-matrix">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Words divided by ,">
+                    <span class="input-group-btn">
+                        <button id="render-button" class="btn btn-primary" type="button">Render</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="word-matrix">
 
+                </div>
+            </div>
+        </div>
     </div>
+
 </body>
 <script>
     init()
