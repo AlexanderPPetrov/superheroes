@@ -1,4 +1,4 @@
-var wordsArray = ["test", "combo","another","programming","associate","word","what","cat","dog","vvv"],
+var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
     lettersArray = [],
     lettersHashMap = {},
     commonWords = {},
@@ -11,17 +11,17 @@ function init() {
 
 }
 
-function addEvent(){
-    $('#render-button').on('click', function(){
-        var value = $(this).closest('.input-group').find('input').val().replace(/ /g,'');
+function addEvent() {
+    $('#render-button').on('click', function () {
+        var value = $(this).closest('.input-group').find('input').val().replace(/ /g, '');
         wordsArray = value.split(',');
         calculateWords();
     })
 }
 
-function calculateWords(){
+function calculateWords() {
 
-    wordsArray.sort(function(a, b){
+    wordsArray.sort(function (a, b) {
         return b.length - a.length;
     });
 
@@ -31,22 +31,36 @@ function calculateWords(){
     lettersArray = defineLettersGrid(wordsArray);
     console.log(wordsArray, lettersHashMap, commonWords, lettersArray);
 
+    placeWordInGrid({
+        word: "proba",
+        direction: "horizontal",
+        x: 2,
+        y: 3
+    }, lettersArray);
+
+    placeWordInGrid({
+        word: "test",
+        direction: "vertical",
+        x: 10,
+        y: 5
+    }, lettersArray);
+
     renderLetters(lettersArray);
 
 }
 
-function getLettersHashMap(words){
+function getLettersHashMap(words) {
 
     var lettersHash = {};
 
     for (var i = 0; i < words.length; i++) {
         for (var j = 0; j < words[i].length; j++) {
 
-            if(!lettersHash[words[i][j]]){
+            if (!lettersHash[words[i][j]]) {
                 lettersHash[words[i][j]] = [];
             }
 
-            if(lettersHash[words[i][j]].indexOf(words[i]) == -1){
+            if (lettersHash[words[i][j]].indexOf(words[i]) == -1) {
                 lettersHash[words[i][j]].push(words[i])
             }
         }
@@ -60,13 +74,13 @@ function getCommonWordsHashMap(lettersHash, words) {
     var commonWords = {};
 
     for (var i = 0; i < words.length; i++) {
-        if(!commonWords[words[i]]){
+        if (!commonWords[words[i]]) {
             commonWords[words[i]] = [];
         }
         for (var j = 0; j < words[i].length; j++) {
 
-            for(var k = 0; k < lettersHash[words[i][j]].length; k++){
-                if(commonWords[words[i]].indexOf(lettersHash[words[i][j]][k]) == -1 && words[i] != lettersHash[words[i][j]][k]){
+            for (var k = 0; k < lettersHash[words[i][j]].length; k++) {
+                if (commonWords[words[i]].indexOf(lettersHash[words[i][j]][k]) == -1 && words[i] != lettersHash[words[i][j]][k]) {
                     commonWords[words[i]].push(lettersHash[words[i][j]][k])
 
                 }
@@ -78,8 +92,8 @@ function getCommonWordsHashMap(lettersHash, words) {
 }
 
 function excludeUncommonWords(commonWords) {
-    for(var key in commonWords){
-        if(commonWords[key].length == 0){
+    for (var key in commonWords) {
+        if (commonWords[key].length == 0) {
             var index = wordsArray.indexOf(commonWords[key]);
             wordsArray.splice(index, 1);
             for (var j = 0; j < key.length; j++) {
@@ -90,41 +104,72 @@ function excludeUncommonWords(commonWords) {
     }
 }
 
-function renderLetters(lettersArray){
-
-    for (var i = 0; i < lettersArray.length; i++) {
-        for(var j = 0; j < lettersArray[i].length; j++){
-            if(lettersArray[i][j] != ''){
-                var $letterTemplate = $("<div class='letter'>"+ lettersArray[i][j] +"</div>");
-                $letterTemplate.css({'left':j*boxSize+"px",'top':i*boxSize+ "px"}).appendTo('#word-matrix');
-            }
-        }
-    }
-
-}
-
-function defineLettersGrid(words){
+function defineLettersGrid(words) {
     var lettersGrid = [],
-        index = Math.ceil(words.length/2),
+        index = Math.ceil(words.length / 2),
         maxSize = 0;
-    for(var i = 0; i < index; i++) {
+    for (var i = 0; i < index; i++) {
         maxSize += words[i].length - 1;
     }
     maxSize = maxSize * 2;
 
     for (var j = 0; j < maxSize; j++) {
         var xArray = [];
-            lettersGrid.push(xArray);
+        lettersGrid.push(xArray);
 
         for (var k = 0; k < maxSize; k++) {
-            lettersGrid[j].push('_');
+            lettersGrid[j].push('');
         }
     }
     return lettersGrid;
 
 }
 
+function placeWordInGrid(wordObject, grid) {
+
+    if (wordObject.direction == "horizontal") {
+        for (var i = 0; i < wordObject.word.length; i++) {
+            grid[wordObject.y][wordObject.x + i] = wordObject.word.charAt(i);
+        }
+    } else {
+        for (var i = 0; i < wordObject.word.length; i++) {
+            grid[wordObject.y + i][wordObject.x] = wordObject.word.charAt(i);
+        }
+    }
+
+}
+
+function renderLetters(lettersArray) {
 
 
-//TODO
+    var startX = lettersArray.length,
+        startY = lettersArray.length,
+        endX = 0,
+        endY = 0;
+
+    for (var i = 0; i < lettersArray.length; i++) {
+        for (var j = 0; j < lettersArray[i].length; j++) {
+            if (lettersArray[i][j] != '') {
+                startX = Math.min(startX, i);
+                startY = Math.min(startY, j);
+                endX = Math.max(endX, i);
+                endY = Math.max(endY, j);
+            }
+        }
+    }
+
+    for (var i = startX; i <= endX; i++) {
+        for (var j = startY; j <= endY; j++) {
+            if (lettersArray[i][j] != '') {
+
+                var $letterTemplate = $("<div class='letter'>" + lettersArray[i][j] + "</div>");
+                $letterTemplate.css({
+                    'left': (j - startY) * boxSize + "px",
+                    'top': (i - startX) * boxSize + "px"
+                }).appendTo('#word-matrix');
+            }
+        }
+    }
+
+}
 
