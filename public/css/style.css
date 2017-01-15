@@ -29,3 +29,13 @@ body {
 .coordinates .y {
   color: #4cdcd6;
 }
+
+
+.info-container {
+  color:#777;
+  padding-bottom: 15px;
+}
+.info{
+  color:#000;
+  margin:0 5px;
+}
