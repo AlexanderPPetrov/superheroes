@@ -32,16 +32,16 @@ function init() {
 function resetVars() {
     wordsArray = [];
     bestGrids = [],
-        lettersGrid = [],
-        lettersHashMap = {},
-        usedWordsHash = {},
-        wordsData = {},
-        bestGridScore = 0,
-        generateNextGridCount = 0,
-        startWordX = 0,
-        startWordY = 0,
-        startTimeGrid = 0,
-        startTimeTotal = 0;
+    lettersGrid = [],
+    lettersHashMap = {},
+    usedWordsHash = {},
+    wordsData = {},
+    bestGridScore = 0,
+    generateNextGridCount = 0,
+    startWordX = 0,
+    startWordY = 0,
+    startTimeGrid = 0,
+    startTimeTotal = 0;
 }
 function addEvent() {
     $('#render-button').on('click', function () {
@@ -223,7 +223,9 @@ function renderLetters(lettersGrid) {
         for (var j = startY; j <= endY; j++) {
             if (lettersGrid[i][j] != '') {
 
-                var $letterTemplate = $("<div class='letter'><span class='coordinates'><span class='y'>" + i + "</span>" + ":" + "<span class='x'>" + j + "</span></span>" + lettersGrid[i][j] + "</div>");
+                var offsetX = i - startX;
+                var offsetY = j- startY;
+                var $letterTemplate = $("<div class='letter'><span class='coordinates'><span class='y'>" + offsetX + "</span>" + ":" + "<span class='x'>" + offsetY+ "</span></span>" + lettersGrid[i][j] + "</div>");
                 $letterTemplate.css({
                     'left': (j - startY) * BOX_SIZE + "px",
                     'top': (i - startX) * BOX_SIZE + "px"
@@ -236,7 +238,7 @@ function renderLetters(lettersGrid) {
 
     console.log('generateNextGridCount: ', generateNextGridCount);
     console.log('Words input: ', wordsArray.length, 'Words used: ', bestGridScore);
-    console.log('time spent: ', (currentTime - startTimeTotal)/1000);
+    console.log('time spent: ', (currentTime - startTimeTotal) / 1000);
 
 }
 
