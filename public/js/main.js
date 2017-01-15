@@ -19,8 +19,8 @@ var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "f
     
     INITIAL_DIRECTION = 'HORIZONTAL',
     BOX_SIZE = 41,
-    TIME_PER_GRID = 5000,
-    TIME_TOTAL = 15000;
+    TIME_PER_GRID = 1000,
+    TIME_TOTAL = 1000;
 
 function init() {
 
