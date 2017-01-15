@@ -1,10 +1,10 @@
-var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
+//var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
 //var wordsArray = ["darik", "darko", "marko", "resho", "omgeee", "dron"],
 //var wordsArray = [ "mekq", "kggeek", "mem", "asd", "tet"],
 //var wordsArray = ["hello", "world", "madbid", "interesting", "task", "korea", "programming",
 //        "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog",
 //        "keep", "going", "until", "you", "become", "completely", "numb", "and", "then", "some", "more", "it", "is", "never", "enough"],
-//var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough","ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
+var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough","ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
     bestGrids = [],
     lettersGrid = [],
     lettersHashMap = {},
@@ -19,8 +19,8 @@ var wordsArray = ["test", "combo", "another", "programming", "associate", "word"
 
     INITIAL_DIRECTION = 'HORIZONTAL',
     BOX_SIZE = 41,
-    TIME_PER_GRID = 45000,
-    TIME_TOTAL = 45000;
+    TIME_PER_GRID = 5000,
+    TIME_TOTAL = 15000;
 
 function init() {
 
@@ -351,7 +351,7 @@ function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) 
                                 candidateY = previous.y - k;
                                 candidateX = previous.x + j;
                             }
-                            var candidateWordData = $.extend(true, {}, wordsData[candidateWord]);
+                            var candidateWordData = wordsData[candidateWord];
                             candidateWordData.y = candidateY;
                             candidateWordData.x = candidateX;
                             candidateWordData.direction = candidateDirection;
