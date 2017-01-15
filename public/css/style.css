@@ -13,3 +13,18 @@ body {
   line-height: 30px;
   text-align: center;
 }
+
+
+.coordinates {
+  position: absolute;
+  top: -10px;
+  left: 3px;
+  font-size: 10px;
+  color: #fff;
+}
+.coordinates .x {
+  color: #CDDC39;
+}
+.coordinates .y {
+  color: #4cdcd6;
+}
