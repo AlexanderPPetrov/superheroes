@@ -1,4 +1,8 @@
-var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
+//var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
+//var wordsArray = ["darik", "darko", "marko", "resho", "pleshno", "drisla"],
+//var wordsArray = ["hello", "world", "madbid", "interesting", "task", "korea", "programming"],
+var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough",
+        "ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
     bestGrids = [],
     lettersGrid = [],
     lettersHashMap = {},
@@ -8,10 +12,15 @@ var wordsArray = ["test", "combo", "another", "programming", "associate", "word"
     wordsUsed = 0,
     bestGridScore = 0,
     generateNextGridCount = 0,
-    initialDirection = 'horizontal',
     startWordX = 0,
     startWordY = 0,
-    boxSize = 31;
+    startTimeGrid = 0,
+    startTimeTotal = 0,
+    
+    INITIAL_DIRECTION = 'HORIZONTAL',
+    BOX_SIZE = 41,
+    TIME_PER_GRID = 5000,
+    TIME_TOTAL = 15000;
 
 function init() {
 
@@ -20,8 +29,25 @@ function init() {
 
 }
 
+function resetVars(){
+    wordsArray = [];
+    bestGrids = [],
+    lettersGrid = [],
+    lettersHashMap = {},
+    usedWordsHash = {},
+    wordsData = {},
+    wordsLeft = 0,
+    wordsUsed = 0,
+    bestGridScore = 0,
+    generateNextGridCount = 0,
+    startWordX = 0,
+    startWordY = 0,
+    startTimeGrid = 0,
+    startTimeTotal = 0;
+}
 function addEvent() {
     $('#render-button').on('click', function () {
+        resetVars();
         var value = $(this).closest('.input-group').find('input').val().replace(/ /g, '');
         wordsArray = value.split(',');
         calculateWords();
@@ -29,7 +55,6 @@ function addEvent() {
 }
 
 function calculateWords() {
-    console.log('calculate words')
 
     wordsArray.sort(function (a, b) {
         return b.length - a.length;
@@ -37,7 +62,6 @@ function calculateWords() {
 
     lettersHashMap = getLettersHashMap(wordsArray);
     wordsData = getCommonWordsHashMap(lettersHashMap, wordsArray);
-    console.log(wordsData)
     excludeNotCommonWords(wordsData);
     lettersGrid = defineLettersGrid(wordsArray);
     startWordsCalculation(wordsArray);
@@ -48,18 +72,18 @@ function calculateWords() {
 
 function startWordsCalculation(words) {
 
-    for (var i = 0; i < words.length; i++) {
 
+    startTimeTotal = new Date().getTime();
+    for (var i = 0; i < words.length; i++) {
         wordsData[words[i]].x = startWordX;
         wordsData[words[i]].y = startWordY;
-        wordsData[words[i]].direction = initialDirection;
+        wordsData[words[i]].direction = INITIAL_DIRECTION;
         generateGridStartingFromWord(words[i], wordsData[words[i]]);
-
     }
 
     console.log(bestGrids);
     var counter = 0;
-
+    //
     //setInterval(function(){
     //    if(counter == bestGrids.length){
     //        counter = 0;
@@ -155,15 +179,16 @@ function defineLettersGrid(words) {
 
 }
 
-function placeWordInGrid(word, wordObject, grid) {
+function placeWordInGrid(word, wordData, grid) {
 
-    if (wordObject.direction == "horizontal") {
+    wordsData[word] = wordData;
+    if (wordData.direction == "HORIZONTAL") {
         for (var i = 0; i < word.length; i++) {
-            grid[wordObject.y][wordObject.x + i] = word.charAt(i);
+            grid[wordData.y][wordData.x + i] = word.charAt(i);
         }
     } else {
         for (var i = 0; i < word.length; i++) {
-            grid[wordObject.y + i][wordObject.x] = word.charAt(i);
+            grid[wordData.y + i][wordData.x] = word.charAt(i);
         }
     }
     wordsUsed++;
@@ -172,6 +197,9 @@ function placeWordInGrid(word, wordObject, grid) {
 }
 
 function removeWordFromGrid(word, wordObject, grid) {
+    if (word == 'darik' && wordObject.y == 22 && wordObject.x == 27) {
+        console.log("weird");
+    }
 
     var currentY = wordObject.y;
     var currentX = wordObject.x;
@@ -181,7 +209,7 @@ function removeWordFromGrid(word, wordObject, grid) {
             grid[currentY][currentX] = '';
         }
 
-        if (wordObject.direction == 'horizontal') {
+        if (wordObject.direction == 'HORIZONTAL') {
             currentX += 1;
         } else {
             currentY += 1;
@@ -220,8 +248,8 @@ function renderLetters(lettersGrid) {
 
                 var $letterTemplate = $("<div class='letter'><span class='coordinates'><span class='y'>"+i +"</span>" + ":" + "<span class='x'>"+ j +"</span></span>" + lettersGrid[i][j] + "</div>");
                 $letterTemplate.css({
-                    'left': (j - startY) * boxSize + "px",
-                    'top': (i - startX) * boxSize + "px"
+                    'left': (j - startY) * BOX_SIZE + "px",
+                    'top': (i - startX) * BOX_SIZE + "px"
                 }).appendTo('#word-matrix');
             }
         }
@@ -242,7 +270,6 @@ function keepGridIfBetter(grid, gridWordsSize) {
 
         if (gridWordsSize > bestGridScore) {
             bestGrids = [];
-            console.log('empty')
         }
 
         bestGridScore = gridWordsSize;
@@ -256,7 +283,7 @@ function keepGridIfBetter(grid, gridWordsSize) {
 
 
 function isPositionAvailable(y, x, direction, grid) {
-    if (direction == 'horizontal') {
+    if (direction == 'HORIZONTAL') {
         if (y - 1 > 0 && grid[y - 1][x] != '')
             return false;
         if (y + 1 < grid.length && grid[y + 1][x] != '')
@@ -274,10 +301,10 @@ function isPositionAvailable(y, x, direction, grid) {
 function generateGridStartingFromWord(word, wordData) {
 
     var wordScore = calculateCandidateScore(word, wordData, -1, -1);
-    console.log(wordScore, word);
 
     if (wordScore >= 0) {
 
+        startTimeGrid = new Date().getTime();
         placeWordInGrid(word, wordData, lettersGrid);
         keepGridIfBetter(lettersGrid, 1);
 
@@ -294,34 +321,32 @@ function generateNextGrid(previousWord, previousWordData) {
 
     generateNextGridCount++;
     if(bestGridScore == wordsArray.length) return;
+    if (shouldTerminate()) return;
 
-
-    var candidateDirection = 'horizontal';
-
-    if (previousWordData.direction == 'horizontal') {
-        candidateDirection = 'vertical';
+    var candidateDirection = 'HORIZONTAL';
+    if (previousWordData.direction == 'HORIZONTAL') {
+        candidateDirection = 'VERTICAL';
     }
 
     for (var i = 0; i < previousWordData.candidates.length; i++) {
 
         var candidateWord = previousWordData.candidates[i];
-        var candidateWordData = wordsData[candidateWord];
-        candidateWordData.direction = candidateDirection;
 
         if (!usedWordsHash[candidateWord]) {
 
             for (var j = 0; j < previousWord.length; j++) {
 
                 var crossLetter = previousWord.charAt(j);
-                if (lettersHashMap[crossLetter].indexOf(candidateWord)) {
+                if (lettersHashMap[crossLetter].indexOf(candidateWord) != -1 ) {
 
-                    var crossingY = previousWordData.y + j,
-                        crossingX = previousWordData.x;
 
-                    if (candidateDirection == 'vertical') {
-
-                        crossingY = previousWordData.y;
+                    var crossingY = previousWordData.y,
                         crossingX = previousWordData.x + j;
+
+                    if (previousWord.direction == 'VERTICAL') {
+
+                        crossingY = previousWordData.y + j;
+                        crossingX = previousWordData.x;
 
                     }
 
@@ -332,14 +357,17 @@ function generateNextGrid(previousWord, previousWordData) {
                             var candidateY = previousWordData.y + j;
                             var candidateX = previousWordData.x - k;
 
-                            if (candidateDirection == 'vertical') {
+                            if (candidateDirection == 'VERTICAL') {
                                 candidateY = previousWordData.y - k;
                                 candidateX = previousWordData.x + j;
                             }
+
+                            var candidateWordData = wordsData[candidateWord];
                             candidateWordData.y = candidateY;
                             candidateWordData.x = candidateX;
+                            candidateWordData.direction = candidateDirection;
 
-                            var candidateBoardScore = calculateCandidateScore(candidateWord, candidateWordData, crossingY, crossingX);
+                            var candidateBoardScore = calculateCandidateScore(candidateWord, candidateWordData, crossingX, crossingY);
                             if (candidateBoardScore >= 0) { //the candidate is good, so let's place it and explore the option further
 
                                 placeWordInGrid(candidateWord, candidateWordData, lettersGrid);
@@ -348,11 +376,11 @@ function generateNextGrid(previousWord, previousWordData) {
 
                                 if(bestGridScore == wordsArray.length) return;
 
-                                for (var key in usedWordsHash) {
-
-                                    if (usedWordsHash[key]) {
-                                        console.log(key, usedWordsHash[key])
-                                        generateNextGrid(key, wordsData[key]);
+                                //for (var word in wordsData) {
+                                for (var i = 0; i < wordsArray.length; i++) {
+                                    if (usedWordsHash[wordsArray[i]]) {
+                                        wordsLeft--;
+                                        generateNextGrid(wordsArray[i], wordsData[wordsArray[i]]);
                                     }
                                 }
 
@@ -378,7 +406,11 @@ function calculateCandidateScore(word, wordData, intersectionX, intersectionY) {
     var currentLetter = '',
         target = '';
 
-    if (wordData.direction == 'horizontal') {
+    if (wordData.direction == 'HORIZONTAL') {
+        //check whether the element before first letter and element after last letter are free. Words should not touch others
+        if (lettersGrid[wordData.y][wordData.x + word.length] != '') return -1;
+        if (lettersGrid[wordData.y][wordData.x - 1] != '') return -1;
+
 
         for (var i = 0; i < word.length; i++) {
             if (wordData.x + i == intersectionX) continue;
@@ -390,12 +422,17 @@ function calculateCandidateScore(word, wordData, intersectionX, intersectionY) {
                 return -1;//letter is not matching
             } else {
                 //word is crossing another word, increase score
-                console.log('---->', word, wordData, intersectionX, intersectionY)
+                //console.log('---->', word, wordData, intersectionX, intersectionY)
                 candidateScore++;
             }
         }
 
-    } else {
+    } else { //wordData.direction == 'VERTICAL'
+        //check whether the element before first letter and element after last letter are free. Words should not touch others
+        if (lettersGrid[wordData.y + word.length][wordData.x] != '') return -1;
+        if (lettersGrid[wordData.y - 1][wordData.x] != '') return -1;
+
+
 
         for (var i = 0; i < word.length; i++) {
             if (wordData.y + i == intersectionY) continue;
@@ -415,4 +452,34 @@ function calculateCandidateScore(word, wordData, intersectionX, intersectionY) {
     }
 
     return candidateScore;
+}
+
+
+function shouldTerminate() {
+    var currentTime = new Date().getTime();
+    //console.log(currentTime)
+    if (currentTime - startTimeGrid >= TIME_PER_GRID){
+        console.log('exceed')
+        return true; //kill execution if time limit is reached
+    }
+
+    if (currentTime - startTimeTotal >= TIME_TOTAL){
+        console.log('exceed total')
+        return true;
+    }
+
+    //bottom of recursion
+    if (wordsLeft == 0) {
+        return true;
+    }
+    //we will not find a better solution down this path
+    if (wordsLeft + wordsUsed <= bestGridScore) {
+        return true;
+    }
+    //this is a global maximum so stop searching for better solutions (here better means with more words, not with more crossings)
+    if (bestGridScore == wordsArray.length) {
+        return true;
+    }
+
+    return false;
 }
