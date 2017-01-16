@@ -2,6 +2,7 @@
 //var wordsArray = ["darik", "darko", "marko", "resho", "omgeee", "dron"],
 //var wordsArray = [ "mekq", "kggeek", "mem", "asd", "tet"],
 var wordsArray = ["hello", "world", "madbid", "interesting", "task", "korea", "programming"],
+//var wordsArray = ["dog", "frog"],
 //        "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog",
 //        "keep", "going", "until", "you", "become", "completely", "numb", "and", "then", "some", "more", "it", "is", "never", "enough"],
 //var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough","ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
@@ -150,7 +151,7 @@ function defineLettersGrid(words) {
 
     startWordX = startWordY = maxSize;
 
-    maxSize = maxSize * 2;
+    maxSize = maxSize * 3;
 
     for (var j = 0; j < maxSize; j++) {
         var xArray = [];
