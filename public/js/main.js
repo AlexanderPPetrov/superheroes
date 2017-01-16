@@ -407,12 +407,7 @@ function calculateCandidateScore(word, wordData, intersectionX, intersectionY) {
             if (wordData.x + i == intersectionX) continue;
             currentLetter = word.charAt(i);
             target = lettersGrid[wordData.y][wordData.x + i];
-            if (word == 'jumped' && wordData.x == 76 && wordData.y == 71) {
-                console.log('wordData', word, wordData)
-            }
-            if (word == 'brown' && wordData.x == 75 && wordData.y == 75) {
-                console.log('wordData', word, wordData)
-            }
+
             if (target == '') { //empty, so good candidate if it has valid neighbours
 
                 if (!isPositionAvailable(wordData.y, wordData.x + i, wordData.direction, lettersGrid)) return -1;
