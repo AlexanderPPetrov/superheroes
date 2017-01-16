@@ -1,11 +1,11 @@
 //var wordsArray = ["test", "combo", "another", "programming", "associate", "word", "what", "cat", "dog", "vvv"],
 //var wordsArray = ["darik", "darko", "marko", "resho", "omgeee", "dron"],
 //var wordsArray = [ "mekq", "kggeek", "mem", "asd", "tet"],
-var wordsArray = ["hello", "world", "madbid", "interesting", "task", "korea", "programming"],
+//var wordsArray = ["hello", "world", "madbid", "interesting", "task", "korea", "programming"],
 //var wordsArray = ["dog", "frog"],
 //        "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog",
 //        "keep", "going", "until", "you", "become", "completely", "numb", "and", "then", "some", "more", "it", "is", "never", "enough"],
-//var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough","ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
+var wordsArray = ["hello", "world", "task", "korea", "the", "quick", "brown", "fox", "jumped", "over", "lazy", "dog", "keep", "going", "until", "you", "become", "numb", "and", "then", "some", "more","it","is","never","enough","ta", "tb", "tc", "td", "te", "tf", "tg", "th", "ti", "tj", "tk", "tl", "tm", "tn", "to", "tp"],
     bestGrids = [],
     lettersGrid = [],
     lettersHashMap = {},
@@ -308,7 +308,6 @@ function generateGridStartingFromWord(word, wordData) {
 function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) {
 
     generateNextGridCount++;
-    var previous = $.extend(true, {}, previousWordData);
 
     if (bestGridScore == wordsArray.length) return;
     var exceeds = shouldTerminate(wordsLeft, wordsUsed);
@@ -318,13 +317,13 @@ function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) 
 
 
     var candidateDirection = 'HORIZONTAL';
-    if (previous.direction == 'HORIZONTAL') {
+    if (previousWordData.direction == 'HORIZONTAL') {
         candidateDirection = 'VERTICAL';
     }
 
-    for (var i = 0; i < previous.candidates.length; i++) {
+    for (var i = 0; i < previousWordData.candidates.length; i++) {
 
-        var candidateWord = previous.candidates[i];
+        var candidateWord = previousWordData.candidates[i];
 
         if (!usedWordsHash[candidateWord]) {
 
@@ -334,13 +333,13 @@ function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) 
                 if (lettersHashMap[crossLetter].indexOf(candidateWord) != -1) {
 
 
-                    var crossingY = previous.y,
-                        crossingX = previous.x + j;
+                    var crossingY = previousWordData.y,
+                        crossingX = previousWordData.x + j;
 
-                    if (previous.direction == 'VERTICAL') {
+                    if (previousWordData.direction == 'VERTICAL') {
 
-                        crossingY = previous.y + j;
-                        crossingX = previous.x;
+                        crossingY = previousWordData.y + j;
+                        crossingX = previousWordData.x;
 
                     }
 
@@ -348,12 +347,12 @@ function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) 
                         var candidateCrossLetter = candidateWord.charAt(k);
 
                         if (crossLetter == candidateCrossLetter) {
-                            var candidateY = previous.y + j;
-                            var candidateX = previous.x - k;
+                            var candidateY = previousWordData.y + j;
+                            var candidateX = previousWordData.x - k;
 
                             if (candidateDirection == 'VERTICAL') {
-                                candidateY = previous.y - k;
-                                candidateX = previous.x + j;
+                                candidateY = previousWordData.y - k;
+                                candidateX = previousWordData.x + j;
                             }
                             var candidateWordData = wordsData[candidateWord];
                             candidateWordData.y = candidateY;
