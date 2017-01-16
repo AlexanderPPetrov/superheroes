@@ -337,7 +337,7 @@ function generateNextGrid(previousWord, previousWordData, wordsLeft, wordsUsed) 
                     var crossingY = previous.y,
                         crossingX = previous.x + j;
 
-                    if (previousWord.direction == 'VERTICAL') {
+                    if (previous.direction == 'VERTICAL') {
 
                         crossingY = previous.y + j;
                         crossingX = previous.x;
