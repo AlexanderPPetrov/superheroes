@@ -165,7 +165,7 @@ var SuperHero = function (options) {
     };
 
     hero.wins = function () {
-        console.log(hero.get('name'), 'has won the arena' + '\n' + hero.get('winningSlogan'))
+        console.log(hero.get('name'), 'has won the arena', '\n',hero.get('name'), 'says:', hero.get('winningSlogan'))
     };
 
     hero.get = function (property) {
