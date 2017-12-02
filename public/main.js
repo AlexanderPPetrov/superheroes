@@ -1,157 +1,177 @@
-/**
- * Created by alexanderpetrov on 30.11.17 г..
- */
-
 var HeroesArena = function () {
 
     var maxRounds = 50,
         currentRound = 0,
+        playerOne,
+        playerTwo,
         arena = this;
 
-    arena.init = function () {
-        console.log('Arena was initialized');
-    };
+    arena.init = function (heroOne, heroTwo, rounds) {
 
-    arena.addPlayers = function (playerOne, playerTwo) {
+        playerOne = heroOne;
+        playerTwo = heroTwo;
 
-        arena.playerOne = playerOne;
-        arena.playerTwo = playerTwo;
-        console.log('Players:', playerOne.get('name'), 'and', playerTwo.get('name'), 'have entered the arena');
-        console.log(playerOne.get('name'), 'says:',playerOne.get('entrySlogan'));
-        console.log(playerTwo.get('name'), 'says:',playerTwo.get('entrySlogan'));
-    };
-
-
-    arena.start = function (rounds) {
-        if(rounds && rounds <= maxRounds){
+        if (rounds) {
             maxRounds = rounds;
         }
+        console.log('Players:', playerOne.get('name'), 'and', playerTwo.get('name'), 'have entered the arena');
+        console.log(playerOne.get('name'), 'says:', playerOne.get('entrySlogan'));
+        console.log(playerTwo.get('name'), 'says:', playerTwo.get('entrySlogan'));
+    };
+
+
+    arena.start = function () {
         console.log('Fight has started!');
-        arena.tick()
+        playerOne.setOpponent(playerTwo);
+        playerTwo.setOpponent(playerOne);
+        arena.round()
     };
 
-    arena.tick = function(){
+    arena.round = function () {
 
-        if(currentRound > maxRounds){
-            arenaChooseWinner();
-
-        }else{
-
-            if(arena.playerOne.get('health') <= 0){
-                arenaChooseWinner();
-                return;
-            }
-            if(arena.playerOne.get('health') <= 0){
-                arenaChooseWinner();
-                return;
-            }
-
-            arena.playerOne.faceOpponent(arena.playerTwo);
-            arena.playerTwo.faceOpponent(arena.playerOne);
-            currentRound++;
-            arena.tick();
-        }
-    };
-
-    var arenaChooseWinner = function(){
-
-        console.log('Arena match has ended.');
-        var playerOneHealth = arena.playerOne.get('health'),
-            playerTwoHealth = arena.playerTwo.get('health');
-
-        if(playerOneHealth <= 0 && playerTwoHealth <= 0){
-            console.log('Wow what a match they are both down. There is no winner');
+        if (hasMatchEnded()) {
+            arenaRenderMatchEnd();
             return;
         }
+        update();
+        render();
+        currentRound++;
+        arena.round();
+    };
 
-        if(playerOneHealth > playerTwoHealth){
-            arena.playerOne.wins()
-        } else if (playerOneHealth < playerTwoHealth){
-            arena.playerTwo.wins()
+    var hasMatchEnded = function () {
+        return currentRound >= maxRounds ||
+            playerOne.get('health') <= 0 ||
+            playerTwo.get('health') <= 0
+    };
+
+    var update = function () {
+        playerOne.update();
+        playerTwo.update();
+        playerOne.updateDamageTaken(playerTwo.getDamage());
+        playerTwo.updateDamageTaken(playerOne.getDamage());
+    };
+
+    var render = function () {
+        playerOne.render();
+        playerTwo.renderDamageTaken();
+        playerTwo.render();
+        playerOne.renderDamageTaken();
+    };
+
+    var arenaRenderMatchEnd = function () {
+        console.log('Arena match has ended.');
+        var playerOneHealth = playerOne.get('health'),
+            playerTwoHealth = playerTwo.get('health');
+
+        if (playerOneHealth <= 0 && playerTwoHealth <= 0) {
+            console.log('Wow what a match they are both down. There is no winner');
+        } else if (playerOneHealth > playerTwoHealth) {
+            playerOne.wins()
+        } else if (playerOneHealth < playerTwoHealth) {
+            playerTwo.wins()
         } else {
             console.log('What a match! It is hard to decide who is stronger');
         }
     };
 
-    arena.init();
-
 };
 
 
-var SuperHero = function(options){
+var SuperHero = function (options) {
 
-    var defaults = {
-        health: 100,
-        hitActions: [{
-            name: 'do a normal attack',
-            damage: 5,
-            chanceToHit: 100
-        }],
-        entrySlogan:'Get over here!',
-        winningSlogan:'I am the winner!',
-        bodyParts:[
-            {
-                name:'head',
-                blockChance:50,
-                damageMultiplier: 1.5
-            },
-            {
-                name:'body',
-                blockChance:30,
-                damageMultiplier: 1.2
-            },
-            {
-                name:'legs',
-                blockChance:20,
-                damageMultiplier: 1.1
-            }
-        ]
-    };
+    var opponent = null,
+        defaults = {
+            health: 100,
+            hitActions: [{
+                name: 'do a normal attack',
+                damage: 5,
+                chanceToHit: 100
+            }],
+            entrySlogan: 'Get over here!',
+            winningSlogan: 'I am the winner!',
+            bodyParts: [
+                {
+                    name: 'head',
+                    blockChance: 50,
+                    damageMultiplier: 1.5
+                },
+                {
+                    name: 'body',
+                    blockChance: 30,
+                    damageMultiplier: 1.2
+                },
+                {
+                    name: 'legs',
+                    blockChance: 20,
+                    damageMultiplier: 1.1
+                }
+            ]
+        },
+        currentRound = {
+            hit: {},
+            target: {},
+            damage: 0
+        },
+        hero = this;
 
-    var hero = this;
-    hero.init = function(options){
+    hero.init = function (options) {
         hero.settings = $.extend({}, defaults, options)
     };
 
-    hero.faceOpponent = function(superHero){
+    hero.setOpponent = function (superHero) {
 
-        strikeOpponent(superHero);
+        opponent = superHero;
 
     };
 
-    var strikeOpponent = function(opponent){
+    hero.update = function () {
+        currentRound.hit = hero.get('hitActions')[getRandomInt(0, hero.get('hitActions').length - 1)],
+            currentRound.target = opponent.get('bodyParts')[getRandomInt(0, opponent.get('bodyParts').length - 1)];
 
-        var hit = hero.get('hitActions')[getRandomInt(0, hero.get('hitActions').length - 1)],
-            target = opponent.get('bodyParts')[getRandomInt(0, opponent.get('bodyParts').length - 1)];
-
-        console.log(hero.get('name'), 'decides to', hit.name , 'at', opponent.get('name')+ "'s",target.name);
+        var blockChance = getRandomInt(0, currentRound.target.blockChance),
+            hitChance = getRandomInt(0, currentRound.hit.chanceToHit);
 
 
-        var blockChance = getRandomInt(0, target.blockChance),
-            hitChance = getRandomInt(0, hit.chanceToHit);
-
-        if(hitChance >=blockChance){
-            opponent.gotHit(hit.damage*target.damageMultiplier);
-        }else{
-            console.log(opponent.get('name'), 'blocked the attack!');
+        if (hitChance >= blockChance) {
+            currentRound.damage = Math.ceil(currentRound.hit.damage * currentRound.target.damageMultiplier);
+        } else {
+            //TODO successively blocks should be restricted?
+            currentRound.damage = 0;
         }
 
+
     };
 
-    hero.gotHit = function(damage){
-        damage = Math.round(damage);
-        hero.settings.health -= damage;
-        console.log(hero.get('name'), 'was hit for', damage,'damage and his current health is', hero.get('health'))
+    hero.render = function () {
+        console.log(hero.get('name'), 'decides to', currentRound.hit.name, 'at', opponent.get('name') + "'s", currentRound.target.name);
     };
 
-    hero.wins = function(){
+    hero.renderDamageTaken = function () {
+        if (currentRound.damageTaken > 0) {
+            console.log(hero.get('name'), 'was hit for', currentRound.damageTaken, 'damage and his current health is', hero.get('health'))
+        } else {
+            console.log(hero.get('name'), 'blocked the attack!');
+        }
+    };
+
+    hero.getDamage = function () {
+        return currentRound.damage;
+    };
+
+    hero.updateDamageTaken = function (damage) {
+        currentRound.damageTaken = damage;
+        hero.settings.health -= currentRound.damageTaken;
+    };
+
+    hero.wins = function () {
         console.log(hero.get('name'), 'has won the arena' + '\n' + hero.get('winningSlogan'))
     };
 
-    hero.get = function(property){
+    hero.get = function (property) {
         return hero.settings[property];
     };
-    hero.set = function(property, value){
+    hero.set = function (property, value) {
         hero.settings[property] = value;
     };
 
@@ -164,14 +184,14 @@ var SuperHero = function(options){
 
 };
 
-function startGame(){
+function startGame() {
 
     var arena = new HeroesArena(),
 
         bruceWayne = new SuperHero({
-            name:'Bruce Wayne',
-            entrySlogan:'I am vengeance! I am the night! I am Batman!',
-            winningSlogan:'The Night is Dark and full of Terrors!',
+            name: 'Bruce Wayne',
+            entrySlogan: 'I am vengeance! I am the night! I am Batman!',
+            winningSlogan: 'The Night is Dark and full of Terrors!',
             hitActions: [
                 {
                     name: 'throw a vicious strike',
@@ -190,10 +210,11 @@ function startGame(){
                 }
             ]
         }),
+
         clarkKent = new SuperHero({
-            name:'Clark Kent',
-            entrySlogan:"It's a bird! It's a plane! It's Superman!",
-            winningSlogan:"Oh boy! Was that even a challenge?",
+            name: 'Clark Kent',
+            entrySlogan: "It's a bird! It's a plane! It's Superman!",
+            winningSlogan: "Oh boy! Was that even a challenge?",
             hitActions: [
                 {
                     name: 'do an epic charge',
@@ -213,9 +234,9 @@ function startGame(){
             ]
         });
 
-    arena.addPlayers(bruceWayne, clarkKent);
+    arena.init(bruceWayne, clarkKent, 20);
 
-    arena.start(20);
+    arena.start();
 }
 
 
