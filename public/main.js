@@ -144,7 +144,7 @@ var SuperHero = function (options) {
     hero.update = function () {
 
         currentRound.hit = hero.get('hitActions')[getRandomInt(0, hero.get('hitActions').length - 1)],
-            currentRound.target = opponent.get('bodyParts')[getRandomInt(0, opponent.get('bodyParts').length - 1)];
+        currentRound.target = opponent.get('bodyParts')[getRandomInt(0, opponent.get('bodyParts').length - 1)];
 
         var blockChance = getRandomInt(0, currentRound.target.blockChance),
             hitChance = getRandomInt(0, currentRound.hit.chanceToHit);
