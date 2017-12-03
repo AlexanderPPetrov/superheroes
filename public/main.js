@@ -17,14 +17,21 @@ var HeroesArena = function () {
         console.log('Players:', playerOne.get('name'), 'and', playerTwo.get('name'), 'have entered the arena');
         console.log(playerOne.get('name'), 'says:', playerOne.get('entrySlogan'));
         console.log(playerTwo.get('name'), 'says:', playerTwo.get('entrySlogan'));
+
     };
 
-
     arena.start = function () {
+
+        if (!playerOne || !playerTwo) {
+            console.log("Arena needs two players in order to start");
+            return;
+        }
+
         console.log('Fight has started!');
         playerOne.setOpponent(playerTwo);
         playerTwo.setOpponent(playerOne);
         arena.round()
+
     };
 
     arena.round = function () {
@@ -37,29 +44,37 @@ var HeroesArena = function () {
         render();
         currentRound++;
         arena.round();
+
     };
 
     var hasMatchEnded = function () {
+
         return currentRound >= maxRounds ||
             playerOne.get('health') <= 0 ||
             playerTwo.get('health') <= 0
+
     };
 
     var update = function () {
+
         playerOne.update();
         playerTwo.update();
         playerOne.updateDamageTaken(playerTwo.getDamage());
         playerTwo.updateDamageTaken(playerOne.getDamage());
+
     };
 
     var render = function () {
+
         playerOne.render();
         playerTwo.renderDamageTaken();
         playerTwo.render();
         playerOne.renderDamageTaken();
+
     };
 
     var arenaRenderMatchEnd = function () {
+
         console.log('Arena match has ended.');
         var playerOneHealth = playerOne.get('health'),
             playerTwoHealth = playerTwo.get('health');
@@ -76,7 +91,6 @@ var HeroesArena = function () {
     };
 
 };
-
 
 var SuperHero = function (options) {
 
@@ -116,7 +130,9 @@ var SuperHero = function (options) {
         hero = this;
 
     hero.init = function (options) {
-        hero.settings = $.extend({}, defaults, options)
+
+        hero.settings = $.extend({}, defaults, options);
+
     };
 
     hero.setOpponent = function (superHero) {
@@ -126,58 +142,66 @@ var SuperHero = function (options) {
     };
 
     hero.update = function () {
+
         currentRound.hit = hero.get('hitActions')[getRandomInt(0, hero.get('hitActions').length - 1)],
             currentRound.target = opponent.get('bodyParts')[getRandomInt(0, opponent.get('bodyParts').length - 1)];
 
         var blockChance = getRandomInt(0, currentRound.target.blockChance),
             hitChance = getRandomInt(0, currentRound.hit.chanceToHit);
 
-
-        if (hitChance >= blockChance) {
+        if (hitChance >= blockChance || currentRound.damage == 0) {
             currentRound.damage = Math.ceil(currentRound.hit.damage * currentRound.target.damageMultiplier);
         } else {
-            //TODO successively blocks should be restricted?
             currentRound.damage = 0;
         }
-
 
     };
 
     hero.render = function () {
+
         console.log(hero.get('name'), 'decides to', currentRound.hit.name, 'at', opponent.get('name') + "'s", currentRound.target.name);
+
     };
 
     hero.renderDamageTaken = function () {
+
         if (currentRound.damageTaken > 0) {
             console.log(hero.get('name'), 'was hit for', currentRound.damageTaken, 'damage and his current health is', hero.get('health'))
         } else {
             console.log(hero.get('name'), 'blocked the attack!');
         }
+
     };
 
     hero.getDamage = function () {
+
         return currentRound.damage;
+
     };
 
     hero.updateDamageTaken = function (damage) {
+
         currentRound.damageTaken = damage;
         hero.settings.health -= currentRound.damageTaken;
+
     };
 
     hero.wins = function () {
+
         console.log(hero.get('name'), 'has won the arena', '\n',hero.get('name'), 'says:', hero.get('winningSlogan'))
+
     };
 
     hero.get = function (property) {
+
         return hero.settings[property];
+
     };
+
     hero.set = function (property, value) {
+
         hero.settings[property] = value;
-    };
 
-
-    var getRandomInt = function (min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 
     hero.init(options)
@@ -235,8 +259,12 @@ function startGame() {
         });
 
     arena.init(bruceWayne, clarkKent, 20);
-
     arena.start();
+
 }
 
+var getRandomInt = function (min, max) {
 
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+
+};
