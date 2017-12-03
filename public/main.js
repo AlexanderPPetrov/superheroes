@@ -30,7 +30,7 @@ var HeroesArena = function () {
         console.log('Fight has started!');
         playerOne.setOpponent(playerTwo);
         playerTwo.setOpponent(playerOne);
-        arena.round()
+        arena.round();
 
     };
 
@@ -82,9 +82,9 @@ var HeroesArena = function () {
         if (playerOneHealth <= 0 && playerTwoHealth <= 0) {
             console.log('Wow what a match they are both down. There is no winner');
         } else if (playerOneHealth > playerTwoHealth) {
-            playerOne.wins()
+            playerOne.wins();
         } else if (playerOneHealth < playerTwoHealth) {
-            playerTwo.wins()
+            playerTwo.wins();
         } else {
             console.log('What a match! It is hard to decide who is stronger');
         }
@@ -166,7 +166,7 @@ var SuperHero = function (options) {
     hero.renderDamageTaken = function () {
 
         if (currentRound.damageTaken > 0) {
-            console.log(hero.get('name'), 'was hit for', currentRound.damageTaken, 'damage and his current health is', hero.get('health'))
+            console.log(hero.get('name'), 'was hit for', currentRound.damageTaken, 'damage and his current health is', hero.get('health'));
         } else {
             console.log(hero.get('name'), 'blocked the attack!');
         }
@@ -188,7 +188,7 @@ var SuperHero = function (options) {
 
     hero.wins = function () {
 
-        console.log(hero.get('name'), 'has won the arena', '\n',hero.get('name'), 'says:', hero.get('winningSlogan'))
+        console.log(hero.get('name'), 'has won the arena', '\n',hero.get('name'), 'says:', hero.get('winningSlogan'));
 
     };
 
@@ -204,7 +204,7 @@ var SuperHero = function (options) {
 
     };
 
-    hero.init(options)
+    hero.init(options);
 
 };
 
